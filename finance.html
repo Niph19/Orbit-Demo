@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance — Orbit</title>
+    <meta name="description" content="Track student organization income, expenses, and cash balance." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="app-shell">
+      <div id="page-content" class="space-y-6">
+        <!-- 3 Summary Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-medium text-slate-500">Total Income</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+              </span>
+            </div>
+            <p id="fin-total-income" class="text-2xl font-bold text-slate-900 mt-3 tabular-nums">Rp 0</p>
+            <p class="text-xs text-emerald-700 mt-1">All recorded inflows</p>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-medium text-slate-500">Total Expense</span>
+              <span class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </span>
+            </div>
+            <p id="fin-total-expense" class="text-2xl font-bold text-slate-900 mt-3 tabular-nums">Rp 0</p>
+            <p class="text-xs text-red-600 mt-1">All recorded disbursements</p>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-medium text-slate-500">Balance</span>
+              <span class="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+              </span>
+            </div>
+            <p id="fin-balance" class="text-2xl font-bold text-slate-900 mt-3 tabular-nums">Rp 0</p>
+            <p class="text-xs text-slate-500 mt-1">Available organization funds</p>
+          </div>
+        </section>
+
+        <!-- Monthly Bar Chart -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">Monthly Income vs Expense</h2>
+              <p class="text-xs text-slate-500 mt-0.5">6-month breakdown updated automatically when transactions are added</p>
+            </div>
+          </div>
+          <div class="relative h-64">
+            <canvas id="finance-monthly-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- Toolbar & Filters -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <select
+              id="fin-type-filter"
+              aria-label="Filter by transaction type"
+              class="h-10 px-3 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] cursor-pointer"
+            >
+              <option value="All">All Types</option>
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
+            </select>
+
+            <select
+              id="fin-category-filter"
+              aria-label="Filter by category"
+              class="h-10 px-3 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] cursor-pointer"
+            >
+              <option value="All">All Categories</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              id="fin-export-pdf"
+              class="h-10 px-3.5 inline-flex items-center gap-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="file-down" class="w-4 h-4 text-slate-500"></i>
+              <span>Export PDF</span>
+            </button>
+            <button
+              type="button"
+              id="fin-export-excel"
+              class="h-10 px-3.5 inline-flex items-center gap-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="sheet" class="w-4 h-4 text-slate-500"></i>
+              <span>Export Excel</span>
+            </button>
+            <button
+              type="button"
+              id="fin-add-btn"
+              class="h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add Transaction</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Transactions Table -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-4">
+            <p id="fin-count-label" class="text-xs font-medium text-slate-500 tabular-nums"></p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50/70 text-xs font-semibold text-slate-500">
+                  <th class="py-3 px-5 whitespace-nowrap">Date</th>
+                  <th class="py-3 px-4">Description</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Category</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Type</th>
+                  <th class="py-3 px-4 whitespace-nowrap text-right">Amount</th>
+                  <th class="py-3 px-5 whitespace-nowrap">Recorded by</th>
+                </tr>
+              </thead>
+              <tbody id="fin-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+          </div>
+
+          <div id="fin-empty-state" class="hidden py-14 px-6 text-center">
+            <div class="w-11 h-11 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="receipt" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-900">No matching transactions</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              Adjust the type or category filter to view recorded transactions.
+            </p>
+            <button
+              type="button"
+              id="fin-clear-filters-btn"
+              class="mt-4 px-3.5 py-2 text-xs font-medium text-[#3B5BDB] bg-[#EEF2FF] rounded-lg hover:bg-[#DBE4FF] transition-colors"
+            >
+              Clear filters
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        var selectedType = 'All';
+        var selectedCategory = 'All';
+        var finChart = null;
+
+        function populateCategoryOptions() {
+          var state = OrbitApp.getState();
+          var seen = {};
+          var categories = [];
+          for (var i = 0; i < state.transactions.length; i++) {
+            var cat = state.transactions[i].category;
+            if (cat && !seen[cat]) {
+              seen[cat] = true;
+              categories.push(cat);
+            }
+          }
+          categories.sort();
+
+          var select = document.getElementById('fin-category-filter');
+          var previous = select.value || 'All';
+          select.innerHTML = '<option value="All">All Categories</option>' +
+            categories
+              .map(function (c) {
+                return '<option value="' + OrbitApp.escapeHtml(c) + '">' + OrbitApp.escapeHtml(c) + '</option>';
+              })
+              .join('');
+          select.value = seen[previous] ? previous : 'All';
+          selectedCategory = select.value;
+        }
+
+        function updateActionPermissions() {
+          var canEditFin = OrbitApp.canEdit('finance');
+          var addBtn = document.getElementById('fin-add-btn');
+          if (!addBtn) return;
+          if (canEditFin) {
+            addBtn.disabled = false;
+            addBtn.removeAttribute('title');
+            addBtn.className =
+              'h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-[#3B5BDB] text-white hover:bg-[#364FC7] transition-colors whitespace-nowrap cursor-pointer';
+          } else {
+            addBtn.disabled = true;
+            addBtn.setAttribute('title', 'Only officers can edit this');
+            addBtn.className =
+              'h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed whitespace-nowrap';
+          }
+        }
+
+        function renderChart() {
+          var canvas = document.getElementById('finance-monthly-chart');
+          if (!canvas || !window.Chart) return;
+          var series = OrbitApp.getMonthlyFinanceSeries(6);
+          if (finChart) {
+            finChart.destroy();
+          }
+          finChart = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+              labels: series.labels,
+              datasets: [
+                {
+                  label: 'Income',
+                  data: series.income,
+                  backgroundColor: '#3B5BDB',
+                  borderRadius: 6,
+                  barPercentage: 0.7,
+                  categoryPercentage: 0.6
+                },
+                {
+                  label: 'Expense',
+                  data: series.expense,
+                  backgroundColor: '#F59F00',
+                  borderRadius: 6,
+                  barPercentage: 0.7,
+                  categoryPercentage: 0.6
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'top',
+                  align: 'end',
+                  labels: {
+                    usePointStyle: true,
+                    boxWidth: 8,
+                    font: { family: 'Inter', size: 12 }
+                  }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (ctx) {
+                      return ctx.dataset.label + ': ' + OrbitApp.formatCurrency(ctx.parsed.y);
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { font: { family: 'Inter', size: 12 }, color: '#64748B' }
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: { color: '#F1F5F9' },
+                  ticks: {
+                    font: { family: 'Inter', size: 11 },
+                    color: '#64748B',
+                    callback: function (value) {
+                      if (value === 0) return 'Rp 0';
+                      if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1).replace('.0', '') + 'M';
+                      return 'Rp ' + Math.round(value / 1000) + 'k';
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        function renderFinance() {
+          updateActionPermissions();
+          populateCategoryOptions();
+
+          var summary = OrbitApp.getFinanceSummary();
+          document.getElementById('fin-total-income').textContent = OrbitApp.formatCurrency(summary.totalIncome);
+          document.getElementById('fin-total-expense').textContent = OrbitApp.formatCurrency(summary.totalExpense);
+          document.getElementById('fin-balance').textContent = OrbitApp.formatCurrency(summary.balance);
+
+          var state = OrbitApp.getState();
+          var filtered = state.transactions.filter(function (tx) {
+            var matchType = selectedType === 'All' || tx.type === selectedType;
+            var matchCat = selectedCategory === 'All' || tx.category === selectedCategory;
+            return matchType && matchCat;
+          });
+
+          document.getElementById('fin-count-label').textContent =
+            'Showing ' + filtered.length + ' of ' + state.transactions.length + ' transactions';
+
+          var tbody = document.getElementById('fin-table-body');
+          var emptyEl = document.getElementById('fin-empty-state');
+
+          if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+          } else {
+            emptyEl.classList.add('hidden');
+            tbody.innerHTML = filtered
+              .map(function (tx) {
+                var isIncome = tx.type === 'Income';
+                var typeHtml = isIncome
+                  ? '<span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-700"><i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i>Income</span>'
+                  : '<span class="inline-flex items-center gap-1 text-xs font-medium text-red-600"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>Expense</span>';
+
+                var amountHtml = isIncome
+                  ? '<span class="font-semibold text-emerald-700 tabular-nums">+' + OrbitApp.formatCurrency(tx.amount) + '</span>'
+                  : '<span class="font-semibold text-red-600 tabular-nums">-' + OrbitApp.formatCurrency(tx.amount) + '</span>';
+
+                return (
+                  '<tr class="hover:bg-slate-50 transition-colors">' +
+                  '  <td class="py-3.5 px-5 text-slate-500 whitespace-nowrap tabular-nums">' + OrbitApp.formatDate(tx.date) + '</td>' +
+                  '  <td class="py-3.5 px-4 font-medium text-slate-900 min-w-[220px]">' + OrbitApp.escapeHtml(tx.description) + '</td>' +
+                  '  <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">' + OrbitApp.escapeHtml(tx.category) + '</td>' +
+                  '  <td class="py-3.5 px-4 whitespace-nowrap">' + typeHtml + '</td>' +
+                  '  <td class="py-3.5 px-4 whitespace-nowrap text-right">' + amountHtml + '</td>' +
+                  '  <td class="py-3.5 px-5 text-slate-600 whitespace-nowrap">' + OrbitApp.escapeHtml(tx.recordedBy) + '</td>' +
+                  '</tr>'
+                );
+              })
+              .join('');
+          }
+
+          renderChart();
+          OrbitApp.refreshIcons();
+        }
+
+        function openAddTransactionModal() {
+          if (!OrbitApp.canEdit('finance')) {
+            OrbitApp.showToast('Only the Treasurer can record transactions', 'warning');
+            return;
+          }
+
+          var now = new Date();
+          var todayStr =
+            now.getFullYear() +
+            '-' +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(now.getDate()).padStart(2, '0');
+
+          OrbitApp.openModal({
+            title: 'Add Transaction',
+            bodyHtml:
+              '<form id="new-tx-form" class="space-y-4">' +
+              '  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">' +
+              '    <div>' +
+              '      <label for="tx-type-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Type</label>' +
+              '      <select id="tx-type-input" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]">' +
+              '        <option value="Income">Income</option>' +
+              '        <option value="Expense">Expense</option>' +
+              '      </select>' +
+              '    </div>' +
+              '    <div>' +
+              '      <label for="tx-date-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Date</label>' +
+              '      <input type="date" id="tx-date-input" required value="' + todayStr + '" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '    </div>' +
+              '  </div>' +
+              '  <div>' +
+              '    <label for="tx-desc-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Description</label>' +
+              '    <input type="text" id="tx-desc-input" required placeholder="e.g. Monthly member dues — November 2026" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '  </div>' +
+              '  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">' +
+              '    <div>' +
+              '      <label for="tx-cat-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Category</label>' +
+              '      <select id="tx-cat-input" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]">' +
+              '        <option value="School Subsidy">School Subsidy</option>' +
+              '        <option value="Membership Dues">Membership Dues</option>' +
+              '        <option value="Sponsorship">Sponsorship</option>' +
+              '        <option value="Event Operations">Event Operations</option>' +
+              '        <option value="Supplies & Printing">Supplies &amp; Printing</option>' +
+              '        <option value="Equipment">Equipment</option>' +
+              '        <option value="Refreshments">Refreshments</option>' +
+              '      </select>' +
+              '    </div>' +
+              '    <div>' +
+              '      <label for="tx-amount-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Amount (Rp)</label>' +
+              '      <input type="number" id="tx-amount-input" required min="1000" step="1000" placeholder="250000" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] tabular-nums" />' +
+              '    </div>' +
+              '  </div>' +
+              '</form>',
+            footerHtml:
+              '<button type="button" id="tx-modal-cancel" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>' +
+              '<button type="submit" form="new-tx-form" class="px-4 py-2 text-sm font-semibold text-white bg-[#3B5BDB] rounded-lg hover:bg-[#364FC7]">Save Transaction</button>',
+            onMount: function () {
+              document.getElementById('tx-modal-cancel').addEventListener('click', OrbitApp.closeModal);
+              document.getElementById('new-tx-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var type = document.getElementById('tx-type-input').value;
+                var date = document.getElementById('tx-date-input').value;
+                var description = document.getElementById('tx-desc-input').value.trim();
+                var category = document.getElementById('tx-cat-input').value;
+                var amount = parseInt(document.getElementById('tx-amount-input').value, 10);
+
+                if (!description || !date || isNaN(amount) || amount <= 0) {
+                  OrbitApp.showToast('Please enter a valid description and amount', 'warning');
+                  return;
+                }
+
+                var state = OrbitApp.getState();
+                var user = OrbitApp.getCurrentUser();
+                var newTx = {
+                  id: 'TRX-' + (100 + state.transactions.length),
+                  date: date,
+                  description: description,
+                  category: category,
+                  type: type,
+                  amount: amount,
+                  recordedBy: user.name
+                };
+
+                state.transactions.unshift(newTx);
+                state.transactions.sort(function (a, b) {
+                  return String(b.date).localeCompare(String(a.date));
+                });
+
+                OrbitApp.saveState();
+                OrbitApp.addHistory(
+                  'Recorded ' + type.toLowerCase() + ' ' + OrbitApp.formatCurrency(amount) + ' — ' + description,
+                  'Finance'
+                );
+                OrbitApp.closeModal();
+                OrbitApp.showToast('Transaction recorded', 'success');
+                renderFinance();
+              });
+            }
+          });
+        }
+
+        if (OrbitApp.renderLayout({
+          pageTitle: 'Finance',
+          activeNav: 'finance',
+          onStateChange: renderFinance
+        })) {
+          document.getElementById('fin-type-filter').addEventListener('change', function (e) {
+            selectedType = e.target.value;
+            renderFinance();
+          });
+
+          document.getElementById('fin-category-filter').addEventListener('change', function (e) {
+            selectedCategory = e.target.value;
+            renderFinance();
+          });
+
+          document.getElementById('fin-clear-filters-btn').addEventListener('click', function () {
+            selectedType = 'All';
+            selectedCategory = 'All';
+            document.getElementById('fin-type-filter').value = 'All';
+            document.getElementById('fin-category-filter').value = 'All';
+            renderFinance();
+          });
+
+          document.getElementById('fin-export-pdf').addEventListener('click', function () {
+            OrbitApp.showToast('Export started (demo)', 'info');
+          });
+
+          document.getElementById('fin-export-excel').addEventListener('click', function () {
+            OrbitApp.showToast('Export started (demo)', 'info');
+          });
+
+          document.getElementById('fin-add-btn').addEventListener('click', openAddTransactionModal);
+
+          renderFinance();
+        }
+      })();
+    </script>
+  </body>
+</html>

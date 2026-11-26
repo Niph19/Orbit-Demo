@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orbit — School Organization Management Portal</title>
+    <meta name="description" content="Orbit by Niph Code: one digital system for student organization documents, finances, and member records." />
+    <meta property="og:title" content="Orbit — School Organization Management Portal" />
+    <meta property="og:description" content="Every Record in Order. Every Member in the Loop." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+    <!-- Top Demo Banner -->
+    <div class="bg-amber-50 border-b border-amber-200/80 px-4 py-1.5 text-center text-xs font-medium text-amber-900 flex items-center justify-center gap-2">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#F59F00] shrink-0"></i>
+      <span>Demo mode: all data is sample data.</span>
+    </div>
+
+    <!-- Main Centered Entry -->
+    <main class="flex-1 flex items-center justify-center px-4 py-10 sm:py-16">
+      <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Left Intro Column -->
+        <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
+          <div class="inline-flex items-center gap-3">
+            <span id="login-logo"></span>
+            <span class="text-2xl font-bold tracking-tight text-slate-900">Orbit</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight" style="text-wrap: balance;">
+            Every Record in Order. Every Member in the Loop.
+          </h1>
+
+          <p class="text-base text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+            One digital portal for student councils, scout troops, and school clubs to manage proposals, meeting minutes, cash flow, and member rosters without scattered files or paper forms.
+          </p>
+
+          <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-slate-500">
+            <span class="font-medium text-slate-700">OSIS SMK Nusantara</span>
+            <span aria-hidden="true">·</span>
+            <span>Period 2026/2027</span>
+            <span aria-hidden="true">·</span>
+            <span>Advisor: Bu Ratna Dewi, S.Pd.</span>
+          </div>
+        </div>
+
+        <!-- Right Role Selection Card -->
+        <div class="lg:col-span-6">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">Choose a Demo Role</h2>
+              <p class="text-sm text-slate-500 mt-1">
+                Test role-based permissions directly in your browser. You can switch roles anytime from the top bar.
+              </p>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Secretary -->
+              <button
+                type="button"
+                data-role="Secretary"
+                class="role-enter-btn w-full group text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-[#3B5BDB] hover:bg-[#EEF2FF]/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B5BDB] flex items-center justify-between gap-4"
+              >
+                <div class="flex items-start gap-3.5 min-w-0">
+                  <div class="w-10 h-10 rounded-full bg-[#EEF2FF] text-[#3B5BDB] border border-[#DBE4FF] flex items-center justify-center text-xs font-bold shrink-0">
+                    NP
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-slate-900 group-hover:text-[#3B5BDB] transition-colors">
+                      Continue as Secretary
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Nabila Putri (XI RPL 1) · Can add &amp; edit Documents and Members
+                    </p>
+                  </div>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-[#3B5BDB] group-hover:translate-x-0.5 transition-all shrink-0"></i>
+              </button>
+
+              <!-- Treasurer -->
+              <button
+                type="button"
+                data-role="Treasurer"
+                class="role-enter-btn w-full group text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-[#3B5BDB] hover:bg-[#EEF2FF]/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B5BDB] flex items-center justify-between gap-4"
+              >
+                <div class="flex items-start gap-3.5 min-w-0">
+                  <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center text-xs font-bold shrink-0">
+                    RR
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-slate-900 group-hover:text-[#3B5BDB] transition-colors">
+                      Continue as Treasurer
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Rizky Ramadhan (XI AKL 2) · Can record &amp; manage Finance entries
+                    </p>
+                  </div>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-[#3B5BDB] group-hover:translate-x-0.5 transition-all shrink-0"></i>
+              </button>
+
+              <!-- Member -->
+              <button
+                type="button"
+                data-role="Member"
+                class="role-enter-btn w-full group text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-[#3B5BDB] hover:bg-[#EEF2FF]/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B5BDB] flex items-center justify-between gap-4"
+              >
+                <div class="flex items-start gap-3.5 min-w-0">
+                  <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center text-xs font-bold shrink-0">
+                    SA
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-slate-900 group-hover:text-[#3B5BDB] transition-colors">
+                      Continue as Member
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                      Salsa Anindya (X DKV 1) · Read-only access across all pages
+                    </p>
+                  </div>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-[#3B5BDB] group-hover:translate-x-0.5 transition-all shrink-0"></i>
+              </button>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>No password needed in demo mode</span>
+              <button type="button" id="login-reset-btn" class="text-slate-600 hover:text-[#3B5BDB] font-medium transition-colors">
+                Reset sample data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-white px-4 py-4 text-center text-xs text-slate-500">
+      Orbit by Niph Code
+    </footer>
+
+    <div id="orbit-toast-root" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        var logoEl = document.getElementById('login-logo');
+        if (logoEl) {
+          logoEl.innerHTML = OrbitApp.getLogoSvg(36);
+        }
+
+        var buttons = document.querySelectorAll('.role-enter-btn');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].addEventListener('click', function () {
+            var role = this.getAttribute('data-role');
+            OrbitApp.selectRoleAndEnter(role);
+          });
+        }
+
+        var resetBtn = document.getElementById('login-reset-btn');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function () {
+            try {
+              localStorage.removeItem('orbit_demo_state');
+            } catch (e) {}
+            OrbitApp.loadState();
+            OrbitApp.showToast('Sample data reset to defaults', 'success');
+          });
+        }
+
+        OrbitApp.refreshIcons();
+      })();
+    </script>
+  </body>
+</html>

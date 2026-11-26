@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documents — Orbit</title>
+    <meta name="description" content="Manage student organization proposals, meeting minutes, reports, and forms." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="app-shell">
+      <div id="page-content" class="space-y-6">
+        <!-- Toolbar -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div class="relative flex-1 max-w-md">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              <input
+                type="search"
+                id="doc-search-input"
+                placeholder="Search document title or uploader..."
+                class="w-full h-10 pl-9 pr-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] focus:bg-white transition-colors"
+              />
+            </div>
+
+            <select
+              id="doc-category-filter"
+              aria-label="Filter by category"
+              class="h-10 px-3 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] cursor-pointer"
+            >
+              <option value="All">All Categories</option>
+              <option value="Proposal">Proposal</option>
+              <option value="Meeting Minutes">Meeting Minutes</option>
+              <option value="Report">Report</option>
+              <option value="Form">Form</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              id="doc-export-pdf"
+              class="h-10 px-3.5 inline-flex items-center gap-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="file-down" class="w-4 h-4 text-slate-500"></i>
+              <span>Export PDF</span>
+            </button>
+            <button
+              type="button"
+              id="doc-export-excel"
+              class="h-10 px-3.5 inline-flex items-center gap-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="sheet" class="w-4 h-4 text-slate-500"></i>
+              <span>Export Excel</span>
+            </button>
+            <button
+              type="button"
+              id="doc-new-btn"
+              class="h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+            >
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>New Document</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Documents Table -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-4">
+            <p id="doc-count-label" class="text-xs font-medium text-slate-500 tabular-nums"></p>
+            <p class="text-xs text-slate-400">Click any row to view details</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50/70 text-xs font-semibold text-slate-500">
+                  <th class="py-3 px-5">Title</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Category</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Uploaded by</th>
+                  <th class="py-3 px-5 whitespace-nowrap text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody id="doc-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+          </div>
+
+          <div id="doc-empty-state" class="hidden py-14 px-6 text-center">
+            <div class="w-11 h-11 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="file-search" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-900">No matching documents</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              Try adjusting your search query or category filter to find what you need.
+            </p>
+            <button
+              type="button"
+              id="doc-clear-filters-btn"
+              class="mt-4 px-3.5 py-2 text-xs font-medium text-[#3B5BDB] bg-[#EEF2FF] rounded-lg hover:bg-[#DBE4FF] transition-colors"
+            >
+              Clear filters
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Document Details Side Panel -->
+    <div id="doc-drawer-backdrop" class="fixed inset-0 z-40 bg-slate-900/40 hidden"></div>
+    <aside
+      id="doc-drawer"
+      class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl transform translate-x-full transition-transform duration-200 ease-out flex flex-col"
+      aria-label="Document details"
+    >
+      <div class="h-16 px-6 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <span class="text-sm font-semibold text-slate-900">Document Details</span>
+        <button type="button" id="doc-drawer-close" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" aria-label="Close panel">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="doc-drawer-body" class="p-6 overflow-y-auto flex-1 space-y-5"></div>
+      <div id="doc-drawer-footer" class="p-4 px-6 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 shrink-0"></div>
+    </aside>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        var searchQuery = '';
+        var selectedCategory = 'All';
+        var selectedDocId = null;
+
+        function getFilteredDocuments() {
+          var state = OrbitApp.getState();
+          var q = searchQuery.trim().toLowerCase();
+          return state.documents.filter(function (doc) {
+            var matchesCat = selectedCategory === 'All' || doc.category === selectedCategory;
+            var matchesQuery =
+              !q ||
+              doc.title.toLowerCase().indexOf(q) !== -1 ||
+              doc.uploadedBy.toLowerCase().indexOf(q) !== -1 ||
+              doc.category.toLowerCase().indexOf(q) !== -1;
+            return matchesCat && matchesQuery;
+          });
+        }
+
+        function updateActionPermissions() {
+          var canEditDocs = OrbitApp.canEdit('documents');
+          var newBtn = document.getElementById('doc-new-btn');
+          if (!newBtn) return;
+          if (canEditDocs) {
+            newBtn.disabled = false;
+            newBtn.removeAttribute('title');
+            newBtn.className =
+              'h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-[#3B5BDB] text-white hover:bg-[#364FC7] transition-colors whitespace-nowrap cursor-pointer';
+          } else {
+            newBtn.disabled = true;
+            newBtn.setAttribute('title', 'Only officers can edit this');
+            newBtn.className =
+              'h-10 px-4 inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed whitespace-nowrap';
+          }
+        }
+
+        function renderTable() {
+          updateActionPermissions();
+          var docs = getFilteredDocuments();
+          var total = OrbitApp.getState().documents.length;
+
+          var countLabel = document.getElementById('doc-count-label');
+          if (countLabel) {
+            countLabel.textContent = 'Showing ' + docs.length + ' of ' + total + ' documents';
+          }
+
+          var tbody = document.getElementById('doc-table-body');
+          var emptyEl = document.getElementById('doc-empty-state');
+
+          if (docs.length === 0) {
+            tbody.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+          } else {
+            emptyEl.classList.add('hidden');
+            tbody.innerHTML = docs
+              .map(function (doc) {
+                var isFinal = doc.status === 'Final';
+                var statusHtml = isFinal
+                  ? '<span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>Final</span>'
+                  : '<span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700"><i data-lucide="clock" class="w-3.5 h-3.5"></i>Draft</span>';
+
+                return (
+                  '<tr data-doc-id="' + OrbitApp.escapeHtml(doc.id) + '" class="doc-row hover:bg-slate-50 cursor-pointer transition-colors">' +
+                  '  <td class="py-3.5 px-5 font-medium text-slate-900 min-w-[240px]">' +
+                  '    <div class="flex items-center gap-2.5">' +
+                  '      <i data-lucide="file-text" class="w-4 h-4 text-[#3B5BDB] shrink-0"></i>' +
+                  '      <span>' + OrbitApp.escapeHtml(doc.title) + '</span>' +
+                  '    </div>' +
+                  '  </td>' +
+                  '  <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">' + OrbitApp.escapeHtml(doc.category) + '</td>' +
+                  '  <td class="py-3.5 px-4 whitespace-nowrap">' + statusHtml + '</td>' +
+                  '  <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">' + OrbitApp.escapeHtml(doc.uploadedBy) + '</td>' +
+                  '  <td class="py-3.5 px-5 text-slate-500 whitespace-nowrap text-right tabular-nums">' + OrbitApp.formatDate(doc.date) + '</td>' +
+                  '</tr>'
+                );
+              })
+              .join('');
+
+            var rows = tbody.querySelectorAll('.doc-row');
+            for (var i = 0; i < rows.length; i++) {
+              rows[i].addEventListener('click', function () {
+                openDrawer(this.getAttribute('data-doc-id'));
+              });
+            }
+          }
+
+          if (selectedDocId) {
+            renderDrawerContent(selectedDocId);
+          }
+
+          OrbitApp.refreshIcons();
+        }
+
+        function openDrawer(docId) {
+          selectedDocId = docId;
+          renderDrawerContent(docId);
+          document.getElementById('doc-drawer-backdrop').classList.remove('hidden');
+          document.getElementById('doc-drawer').classList.remove('translate-x-full');
+        }
+
+        function closeDrawer() {
+          selectedDocId = null;
+          document.getElementById('doc-drawer-backdrop').classList.add('hidden');
+          document.getElementById('doc-drawer').classList.add('translate-x-full');
+        }
+
+        function renderDrawerContent(docId) {
+          var state = OrbitApp.getState();
+          var doc = null;
+          for (var i = 0; i < state.documents.length; i++) {
+            if (state.documents[i].id === docId) {
+              doc = state.documents[i];
+              break;
+            }
+          }
+          if (!doc) {
+            closeDrawer();
+            return;
+          }
+
+          var isFinal = doc.status === 'Final';
+          var canEditDocs = OrbitApp.canEdit('documents');
+          var nextStatus = isFinal ? 'Draft' : 'Final';
+
+          var bodyEl = document.getElementById('doc-drawer-body');
+          bodyEl.innerHTML =
+            '<div>' +
+            '  <p class="text-xs text-slate-500">' + OrbitApp.escapeHtml(doc.category) + ' · ' + OrbitApp.escapeHtml(doc.id) + '</p>' +
+            '  <h3 class="text-lg font-bold text-slate-900 mt-1 leading-snug">' + OrbitApp.escapeHtml(doc.title) + '</h3>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 py-4 border-y border-slate-100 text-sm">' +
+            '  <div>' +
+            '    <p class="text-xs text-slate-500">Status</p>' +
+            '    <p class="font-semibold mt-1 ' + (isFinal ? 'text-emerald-700' : 'text-amber-700') + '">' + OrbitApp.escapeHtml(doc.status) + '</p>' +
+            '  </div>' +
+            '  <div>' +
+            '    <p class="text-xs text-slate-500">Date</p>' +
+            '    <p class="font-medium text-slate-900 mt-1 tabular-nums">' + OrbitApp.formatDate(doc.date) + '</p>' +
+            '  </div>' +
+            '  <div>' +
+            '    <p class="text-xs text-slate-500">Uploaded by</p>' +
+            '    <p class="font-medium text-slate-900 mt-1">' + OrbitApp.escapeHtml(doc.uploadedBy) + '</p>' +
+            '  </div>' +
+            '  <div>' +
+            '    <p class="text-xs text-slate-500">Attachment</p>' +
+            '    <p class="font-medium text-slate-900 mt-1 truncate" title="' + OrbitApp.escapeHtml(doc.fileName || '') + '">' + OrbitApp.escapeHtml(doc.fileName || 'document.pdf') + '</p>' +
+            '  </div>' +
+            '</div>' +
+            '<div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">' +
+            '  <div class="flex items-center gap-3 min-w-0">' +
+            '    <i data-lucide="paperclip" class="w-4 h-4 text-[#3B5BDB] shrink-0"></i>' +
+            '    <div class="min-w-0">' +
+            '      <p class="text-xs font-medium text-slate-900 truncate">' + OrbitApp.escapeHtml(doc.fileName || 'document.pdf') + '</p>' +
+            '      <p class="text-xs text-slate-500 tabular-nums">' + OrbitApp.escapeHtml(doc.fileSize || '450 KB') + '</p>' +
+            '    </div>' +
+            '  </div>' +
+            '  <button type="button" id="doc-drawer-download" class="px-3 py-1.5 text-xs font-medium text-[#3B5BDB] bg-white border border-slate-200 rounded-lg hover:bg-slate-50 shrink-0">Download</button>' +
+            '</div>' +
+            '<div>' +
+            '  <h4 class="text-xs font-semibold text-slate-500 mb-1.5">Notes &amp; Summary</h4>' +
+            '  <p class="text-sm text-slate-700 leading-relaxed">' + OrbitApp.escapeHtml(doc.notes || 'No additional notes provided for this file.') + '</p>' +
+            '</div>';
+
+          var footerEl = document.getElementById('doc-drawer-footer');
+          footerEl.innerHTML =
+            '<button type="button" id="doc-toggle-status-btn" ' +
+            (canEditDocs ? '' : 'disabled title="Only officers can edit this"') +
+            ' class="px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ' +
+            (canEditDocs
+              ? 'bg-[#3B5BDB] text-white hover:bg-[#364FC7]'
+              : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed') +
+            '">' +
+            (isFinal ? 'Revert to Draft' : 'Mark as Final') +
+            '</button>' +
+            '<button type="button" id="doc-drawer-done-btn" class="px-3.5 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Close</button>';
+
+          var dlBtn = document.getElementById('doc-drawer-download');
+          if (dlBtn) {
+            dlBtn.addEventListener('click', function () {
+              OrbitApp.showToast('Download started (demo)', 'info');
+            });
+          }
+
+          var doneBtn = document.getElementById('doc-drawer-done-btn');
+          if (doneBtn) {
+            doneBtn.addEventListener('click', closeDrawer);
+          }
+
+          var toggleBtn = document.getElementById('doc-toggle-status-btn');
+          if (toggleBtn && canEditDocs) {
+            toggleBtn.addEventListener('click', function () {
+              doc.status = nextStatus;
+              OrbitApp.saveState();
+              OrbitApp.addHistory('Changed "' + doc.title + '" status to ' + nextStatus, 'Documents');
+              OrbitApp.showToast('Status updated to ' + nextStatus, 'success');
+              renderTable();
+            });
+          }
+
+          OrbitApp.refreshIcons();
+        }
+
+        function openNewDocumentModal() {
+          if (!OrbitApp.canEdit('documents')) {
+            OrbitApp.showToast('Only the Secretary can add or edit documents', 'warning');
+            return;
+          }
+
+          var selectedFileName = 'proposal-draft-2026.pdf';
+          var selectedFileSize = '540 KB';
+
+          OrbitApp.openModal({
+            title: 'New Document',
+            bodyHtml:
+              '<form id="new-doc-form" class="space-y-4">' +
+              '  <div>' +
+              '    <label for="doc-title-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Document Title</label>' +
+              '    <input type="text" id="doc-title-input" required placeholder="e.g. Sports Day Event Proposal" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '  </div>' +
+              '  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">' +
+              '    <div>' +
+              '      <label for="doc-cat-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Category</label>' +
+              '      <select id="doc-cat-input" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]">' +
+              '        <option value="Proposal">Proposal</option>' +
+              '        <option value="Meeting Minutes">Meeting Minutes</option>' +
+              '        <option value="Report">Report</option>' +
+              '        <option value="Form">Form</option>' +
+              '      </select>' +
+              '    </div>' +
+              '    <div>' +
+              '      <label for="doc-status-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Status</label>' +
+              '      <select id="doc-status-input" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]">' +
+              '        <option value="Draft">Draft</option>' +
+              '        <option value="Final">Final</option>' +
+              '      </select>' +
+              '    </div>' +
+              '  </div>' +
+              '  <div>' +
+              '    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Attach File (Demo Picker)</label>' +
+              '    <label for="doc-file-input" class="flex items-center justify-between gap-3 p-3.5 rounded-lg border border-dashed border-slate-300 bg-slate-50 hover:border-[#3B5BDB] hover:bg-[#EEF2FF]/30 cursor-pointer transition-colors">' +
+              '      <div class="flex items-center gap-3 min-w-0">' +
+              '        <i data-lucide="upload-cloud" class="w-5 h-5 text-[#3B5BDB] shrink-0"></i>' +
+              '        <div class="min-w-0">' +
+              '          <p id="doc-file-label" class="text-xs font-medium text-slate-800 truncate">Choose a file or keep sample attachment</p>' +
+              '          <p class="text-xs text-slate-500">PDF, DOCX, XLSX (stored locally in demo)</p>' +
+              '        </div>' +
+              '      </div>' +
+              '      <span class="px-2.5 py-1 text-xs font-medium bg-white border border-slate-200 rounded-md text-slate-700 shrink-0">Browse</span>' +
+              '    </label>' +
+              '    <input type="file" id="doc-file-input" class="sr-only" />' +
+              '  </div>' +
+              '  <div>' +
+              '    <label for="doc-notes-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Summary / Notes</label>' +
+              '    <textarea id="doc-notes-input" rows="3" placeholder="Brief description of this document..." class="w-full p-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]"></textarea>' +
+              '  </div>' +
+              '</form>',
+            footerHtml:
+              '<button type="button" id="doc-modal-cancel" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>' +
+              '<button type="submit" form="new-doc-form" class="px-4 py-2 text-sm font-semibold text-white bg-[#3B5BDB] rounded-lg hover:bg-[#364FC7]">Save Document</button>',
+            onMount: function () {
+              document.getElementById('doc-modal-cancel').addEventListener('click', OrbitApp.closeModal);
+
+              var fileInput = document.getElementById('doc-file-input');
+              var fileLabel = document.getElementById('doc-file-label');
+              fileInput.addEventListener('change', function () {
+                if (this.files && this.files.length > 0) {
+                  var f = this.files[0];
+                  selectedFileName = f.name;
+                  selectedFileSize = f.size >= 1048576
+                    ? (f.size / 1048576).toFixed(1) + ' MB'
+                    : Math.max(1, Math.round(f.size / 1024)) + ' KB';
+                  fileLabel.textContent = selectedFileName + ' (' + selectedFileSize + ')';
+                }
+              });
+
+              document.getElementById('new-doc-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var title = document.getElementById('doc-title-input').value.trim();
+                var category = document.getElementById('doc-cat-input').value;
+                var status = document.getElementById('doc-status-input').value;
+                var notes = document.getElementById('doc-notes-input').value.trim();
+                if (!title) return;
+
+                var state = OrbitApp.getState();
+                var user = OrbitApp.getCurrentUser();
+                var now = new Date();
+                var todayStr =
+                  now.getFullYear() +
+                  '-' +
+                  String(now.getMonth() + 1).padStart(2, '0') +
+                  '-' +
+                  String(now.getDate()).padStart(2, '0');
+
+                var newDoc = {
+                  id: 'DOC-' + (101 + state.documents.length + Math.floor(Math.random() * 90)),
+                  title: title,
+                  category: category,
+                  status: status,
+                  uploadedBy: user.name,
+                  date: todayStr,
+                  fileName: selectedFileName,
+                  fileSize: selectedFileSize,
+                  notes: notes || 'Added in Orbit document workspace.'
+                };
+
+                state.documents.unshift(newDoc);
+                OrbitApp.saveState();
+                OrbitApp.addHistory('Uploaded document "' + title + '" (' + status + ')', 'Documents');
+                OrbitApp.closeModal();
+                OrbitApp.showToast('Document saved', 'success');
+                renderTable();
+              });
+            }
+          });
+        }
+
+        if (OrbitApp.renderLayout({
+          pageTitle: 'Documents',
+          activeNav: 'documents',
+          onStateChange: renderTable
+        })) {
+          document.getElementById('doc-search-input').addEventListener('input', function (e) {
+            searchQuery = e.target.value;
+            renderTable();
+          });
+
+          document.getElementById('doc-category-filter').addEventListener('change', function (e) {
+            selectedCategory = e.target.value;
+            renderTable();
+          });
+
+          document.getElementById('doc-clear-filters-btn').addEventListener('click', function () {
+            searchQuery = '';
+            selectedCategory = 'All';
+            document.getElementById('doc-search-input').value = '';
+            document.getElementById('doc-category-filter').value = 'All';
+            renderTable();
+          });
+
+          document.getElementById('doc-export-pdf').addEventListener('click', function () {
+            OrbitApp.showToast('Export started (demo)', 'info');
+          });
+
+          document.getElementById('doc-export-excel').addEventListener('click', function () {
+            OrbitApp.showToast('Export started (demo)', 'info');
+          });
+
+          document.getElementById('doc-new-btn').addEventListener('click', openNewDocumentModal);
+          document.getElementById('doc-drawer-close').addEventListener('click', closeDrawer);
+          document.getElementById('doc-drawer-backdrop').addEventListener('click', closeDrawer);
+
+          renderTable();
+        }
+      })();
+    </script>
+  </body>
+</html>

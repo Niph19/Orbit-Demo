@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Members — Orbit</title>
+    <meta name="description" content="Organization profile and student member roster." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="app-shell">
+      <div id="page-content" class="space-y-6">
+        <!-- Organization Profile Card -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-5 border-b border-slate-100">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0">
+                <i data-lucide="building-2" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h2 id="org-name" class="text-lg font-bold text-slate-900">OSIS SMK Nusantara</h2>
+                <p id="org-sub" class="text-sm text-slate-500 mt-0.5">Student Council · SMK Nusantara</p>
+              </div>
+            </div>
+            <div class="text-sm text-slate-600 tabular-nums">
+              Active Roster: <span id="org-member-count" class="font-bold text-slate-900">12</span> members
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5 text-sm">
+            <div>
+              <p class="text-xs text-slate-500">Term Period</p>
+              <p id="org-period" class="font-semibold text-slate-900 mt-1">2026/2027</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500">Faculty Advisor</p>
+              <p id="org-advisor" class="font-semibold text-slate-900 mt-1">Bu Ratna Dewi, S.Pd.</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500">Student Room</p>
+              <p id="org-room" class="font-semibold text-slate-900 mt-1">Student Center Room 204</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500">Official Email</p>
+              <p id="org-email" class="font-semibold text-slate-900 mt-1">osis@smknusantara.sch.id</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Search & Add Member Toolbar -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input
+              type="search"
+              id="member-search-input"
+              placeholder="Search name, class, or position..."
+              class="w-full h-10 pl-9 pr-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB] focus:bg-white transition-colors"
+            />
+          </div>
+
+          <button
+            type="button"
+            id="member-add-btn"
+            class="h-10 px-4 inline-flex items-center justify-center gap-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0"
+          >
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Add Member</span>
+          </button>
+        </section>
+
+        <!-- Members Table -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-4">
+            <p id="member-count-label" class="text-xs font-medium text-slate-500 tabular-nums"></p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50/70 text-xs font-semibold text-slate-500">
+                  <th class="py-3 px-5">Name</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Class</th>
+                  <th class="py-3 px-4 whitespace-nowrap">Position</th>
+                  <th class="py-3 px-5 whitespace-nowrap text-right">Join Date</th>
+                </tr>
+              </thead>
+              <tbody id="member-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+          </div>
+
+          <div id="member-empty-state" class="hidden py-14 px-6 text-center">
+            <div class="w-11 h-11 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-900">No members found</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              No student records match your current search term.
+            </p>
+            <button
+              type="button"
+              id="member-clear-btn"
+              class="mt-4 px-3.5 py-2 text-xs font-medium text-[#3B5BDB] bg-[#EEF2FF] rounded-lg hover:bg-[#DBE4FF] transition-colors"
+            >
+              Clear search
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        var searchQuery = '';
+
+        function updateActionPermissions() {
+          var canEditMem = OrbitApp.canEdit('members');
+          var addBtn = document.getElementById('member-add-btn');
+          if (!addBtn) return;
+          if (canEditMem) {
+            addBtn.disabled = false;
+            addBtn.removeAttribute('title');
+            addBtn.className =
+              'h-10 px-4 inline-flex items-center justify-center gap-2 text-sm font-semibold rounded-lg bg-[#3B5BDB] text-white hover:bg-[#364FC7] transition-colors whitespace-nowrap shrink-0 cursor-pointer';
+          } else {
+            addBtn.disabled = true;
+            addBtn.setAttribute('title', 'Only officers can edit this');
+            addBtn.className =
+              'h-10 px-4 inline-flex items-center justify-center gap-2 text-sm font-semibold rounded-lg bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed whitespace-nowrap shrink-0';
+          }
+        }
+
+        function renderMembers() {
+          updateActionPermissions();
+          var state = OrbitApp.getState();
+          var org = state.organization;
+
+          document.getElementById('org-name').textContent = org.name;
+          document.getElementById('org-sub').textContent = 'Student Council · ' + org.school;
+          document.getElementById('org-period').textContent = org.period;
+          document.getElementById('org-advisor').textContent = org.advisor;
+          document.getElementById('org-room').textContent = org.room || 'Student Center Room 204';
+          document.getElementById('org-email').textContent = org.email || 'osis@smknusantara.sch.id';
+          document.getElementById('org-member-count').textContent = String(state.members.length);
+
+          var q = searchQuery.trim().toLowerCase();
+          var filtered = state.members.filter(function (m) {
+            if (!q) return true;
+            return (
+              m.name.toLowerCase().indexOf(q) !== -1 ||
+              m.className.toLowerCase().indexOf(q) !== -1 ||
+              m.position.toLowerCase().indexOf(q) !== -1
+            );
+          });
+
+          document.getElementById('member-count-label').textContent =
+            'Showing ' + filtered.length + ' of ' + state.members.length + ' members';
+
+          var tbody = document.getElementById('member-table-body');
+          var emptyEl = document.getElementById('member-empty-state');
+
+          if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+          } else {
+            emptyEl.classList.add('hidden');
+            tbody.innerHTML = filtered
+              .map(function (m) {
+                var parts = m.name.trim().split(/\s+/);
+                var initials = ((parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '')).toUpperCase();
+                var isCoreOfficer =
+                  m.position === 'President' ||
+                  m.position === 'Vice President' ||
+                  m.position === 'Secretary' ||
+                  m.position === 'Treasurer';
+
+                return (
+                  '<tr class="hover:bg-slate-50 transition-colors">' +
+                  '  <td class="py-3.5 px-5 whitespace-nowrap">' +
+                  '    <div class="flex items-center gap-3">' +
+                  '      <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center text-xs font-semibold shrink-0">' + OrbitApp.escapeHtml(initials) + '</div>' +
+                  '      <span class="font-medium text-slate-900">' + OrbitApp.escapeHtml(m.name) + '</span>' +
+                  '    </div>' +
+                  '  </td>' +
+                  '  <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">' + OrbitApp.escapeHtml(m.className) + '</td>' +
+                  '  <td class="py-3.5 px-4 whitespace-nowrap ' + (isCoreOfficer ? 'font-semibold text-[#3B5BDB]' : 'text-slate-700') + '">' + OrbitApp.escapeHtml(m.position) + '</td>' +
+                  '  <td class="py-3.5 px-5 text-slate-500 whitespace-nowrap text-right tabular-nums">' + OrbitApp.formatDate(m.joinDate) + '</td>' +
+                  '</tr>'
+                );
+              })
+              .join('');
+          }
+
+          OrbitApp.refreshIcons();
+        }
+
+        function openAddMemberModal() {
+          if (!OrbitApp.canEdit('members')) {
+            OrbitApp.showToast('Only the Secretary can add members', 'warning');
+            return;
+          }
+
+          var now = new Date();
+          var todayStr =
+            now.getFullYear() +
+            '-' +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(now.getDate()).padStart(2, '0');
+
+          OrbitApp.openModal({
+            title: 'Add Member',
+            bodyHtml:
+              '<form id="new-member-form" class="space-y-4">' +
+              '  <div>' +
+              '    <label for="mem-name-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Full Name</label>' +
+              '    <input type="text" id="mem-name-input" required placeholder="e.g. Raka Mahendra" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '  </div>' +
+              '  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">' +
+              '    <div>' +
+              '      <label for="mem-class-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Class</label>' +
+              '      <input type="text" id="mem-class-input" required placeholder="e.g. XI RPL 1" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '    </div>' +
+              '    <div>' +
+              '      <label for="mem-position-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Position</label>' +
+              '      <input type="text" id="mem-position-input" required value="Member" placeholder="e.g. Member or Coordinator" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '    </div>' +
+              '  </div>' +
+              '  <div>' +
+              '    <label for="mem-join-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Join Date</label>' +
+              '    <input type="date" id="mem-join-input" required value="' + todayStr + '" class="w-full h-10 px-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]" />' +
+              '  </div>' +
+              '</form>',
+            footerHtml:
+              '<button type="button" id="mem-modal-cancel" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>' +
+              '<button type="submit" form="new-member-form" class="px-4 py-2 text-sm font-semibold text-white bg-[#3B5BDB] rounded-lg hover:bg-[#364FC7]">Save Member</button>',
+            onMount: function () {
+              document.getElementById('mem-modal-cancel').addEventListener('click', OrbitApp.closeModal);
+              document.getElementById('new-member-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = document.getElementById('mem-name-input').value.trim();
+                var className = document.getElementById('mem-class-input').value.trim();
+                var position = document.getElementById('mem-position-input').value.trim();
+                var joinDate = document.getElementById('mem-join-input').value;
+
+                if (!name || !className || !position || !joinDate) return;
+
+                var state = OrbitApp.getState();
+                state.members.push({
+                  id: 'MEM-' + (100 + state.members.length),
+                  name: name,
+                  className: className,
+                  position: position,
+                  joinDate: joinDate
+                });
+
+                OrbitApp.saveState();
+                OrbitApp.addHistory('Added member ' + name + ' (' + className + ' — ' + position + ')', 'Members');
+                OrbitApp.closeModal();
+                OrbitApp.showToast('Member added to roster', 'success');
+                renderMembers();
+              });
+            }
+          });
+        }
+
+        if (OrbitApp.renderLayout({
+          pageTitle: 'Members',
+          activeNav: 'members',
+          onStateChange: renderMembers
+        })) {
+          document.getElementById('member-search-input').addEventListener('input', function (e) {
+            searchQuery = e.target.value;
+            renderMembers();
+          });
+
+          document.getElementById('member-clear-btn').addEventListener('click', function () {
+            searchQuery = '';
+            document.getElementById('member-search-input').value = '';
+            renderMembers();
+          });
+
+          document.getElementById('member-add-btn').addEventListener('click', openAddMemberModal);
+
+          renderMembers();
+        }
+      })();
+    </script>
+  </body>
+</html>

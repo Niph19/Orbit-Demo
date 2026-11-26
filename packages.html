@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Packages — Orbit</title>
+    <meta name="description" content="Compare Orbit Core, Orbit Plus, and Orbit Custom packages for school organizations." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div id="app-shell">
+      <div id="page-content" class="space-y-6">
+        <!-- Header Intro -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <h2 class="text-xl font-bold text-slate-900">Orbit Packages for Student Organizations</h2>
+          <p class="text-sm text-slate-600 mt-1 max-w-2xl">
+            Simple, transparent packages designed for student councils (OSIS), scout troops, and school extracurricular clubs.
+          </p>
+        </section>
+
+        <!-- 3 Pricing Cards -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <!-- Orbit Core -->
+          <div class="bg-white rounded-xl border-2 border-[#3B5BDB] shadow-sm p-6 flex flex-col">
+            <div class="pb-5 border-b border-slate-100">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900">Orbit Core</h3>
+                <span class="text-xs font-semibold text-[#3B5BDB]">Recommended</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Up to 100 members · First-year hosting included</p>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 tabular-nums">Rp 750.000</span>
+                <span class="text-xs text-slate-500">fixed</span>
+              </div>
+            </div>
+
+            <ul class="py-5 space-y-3 text-sm text-slate-700 flex-1">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Digital forms and documents</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Finance management</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Member and organization data</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Role-based accounts</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Export to PDF and Excel</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Change history</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Responsive design</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#3B5BDB] shrink-0 mt-0.5"></i>
+                <span>Automatic backup</span>
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              data-plan="Orbit Core"
+              class="pkg-cta-btn w-full h-10 px-4 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#364FC7] transition-colors"
+            >
+              Choose Orbit Core
+            </button>
+          </div>
+
+          <!-- Orbit Plus -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col">
+            <div class="pb-5 border-b border-slate-100">
+              <h3 class="text-lg font-bold text-slate-900">Orbit Plus</h3>
+              <p class="text-xs text-slate-500 mt-1">Core plus selected modules for active clubs</p>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 tabular-nums">From Rp 750.000</span>
+                <span class="text-xs text-slate-500">+ modules</span>
+              </div>
+            </div>
+
+            <ul class="py-5 space-y-3 text-sm text-slate-700 flex-1">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span>Everything included in Orbit Core</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span>Add optional modules when your organization needs them</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span>Pick only the extras you use (e.g. meeting attendance, inventory, event registration)</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                <span>Modular pricing with no unnecessary features</span>
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              data-plan="Orbit Plus"
+              class="pkg-cta-btn w-full h-10 px-4 rounded-lg bg-white border border-slate-200 text-slate-800 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            >
+              Explore Orbit Plus
+            </button>
+          </div>
+
+          <!-- Orbit Custom -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col">
+            <div class="pb-5 border-b border-slate-100">
+              <h3 class="text-lg font-bold text-slate-900">Orbit Custom</h3>
+              <p class="text-xs text-slate-500 mt-1">Final price determined after consultation</p>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 tabular-nums">From Rp 1.250.000</span>
+              </div>
+            </div>
+
+            <ul class="py-5 space-y-3 text-sm text-slate-700 flex-1">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#F59F00] shrink-0 mt-0.5"></i>
+                <span>Everything in Orbit Core &amp; Plus modules</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#F59F00] shrink-0 mt-0.5"></i>
+                <span>Custom member capacity above 100 members</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#F59F00] shrink-0 mt-0.5"></i>
+                <span>Tailored approval workflows and school branding</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-[#F59F00] shrink-0 mt-0.5"></i>
+                <span>Dedicated onboarding session for officers &amp; advisors</span>
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              data-plan="Orbit Custom"
+              class="pkg-cta-btn w-full h-10 px-4 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
+            >
+              Request Consultation
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        if (OrbitApp.renderLayout({
+          pageTitle: 'Packages',
+          activeNav: 'packages'
+        })) {
+          var buttons = document.querySelectorAll('.pkg-cta-btn');
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener('click', function () {
+              var plan = this.getAttribute('data-plan');
+              OrbitApp.showToast('Selected ' + plan + ' (demo inquiry)', 'info');
+            });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
